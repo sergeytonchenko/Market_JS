@@ -72,7 +72,7 @@ $(document).ready(function content() {
         } 
         let productItems = `<h3 class="product-title">
                                 ${ProductName}
-                                <span>(${ProductQuantity})</span>
+                                <span class="product-quantity">(${ProductQuantity})</span>
                             </h3>
                             <p class="product-price">${ProductPrice}</p>
                             <button class="product-btn">Add</button>
@@ -137,11 +137,12 @@ $(document).ready(function content() {
         document.querySelector('.total-price').innerText = '$' + total;
     }
     
-    function quantityChanged(event) {
+    function quantityChanged(event) {        
         let input = event.target;
-        if (isNaN(input.value) || input.value <= 0 || input.value > ProductQuantity) {
-            input.value = 1
-            console.log(ProductQuantity);
+        let span = parseInt($(this).prev().prev().text().replace(/[^\d]/ig, ''));
+        console.log(span);
+        if (isNaN(input.value) || input.value <= 0 || input.value > span) {
+            input.value = 1            
         }
         updateCartTotal()
     }
@@ -178,12 +179,3 @@ $(document).ready(function content() {
         cartItem.querySelector('.cart-quantity').addEventListener('change', quantityChanged);
     }
 })
-
-
-
-
-
-    
-
-
-
