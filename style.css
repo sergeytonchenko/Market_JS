@@ -1,0 +1,142 @@
+.main {
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.product-row {
+    border: 2px solid #020202;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.product-row-title {
+    cursor: pointer;
+    background-color: cornflowerblue;
+}
+
+.product-list {
+    border: 1px solid #3d25a8;
+    border-radius: 5px;
+    margin: 10px auto; 
+    display: grid;  
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;   
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid #160d3d;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 15px;
+}
+
+.product-title {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.product-price, .cart-price {
+    color: #000000;
+    font-size: 20px;
+    font-weight: 200;    
+}
+
+.product-btn {
+    padding: 10px 15px;
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
+    font-size: 20px;
+    background-color: #13740b;
+    border-radius: 5px;
+}
+
+.cart {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #2c5a07;
+    border-radius: 5px;
+    width: 500px;
+    margin: 10px auto;
+    height: auto;
+}
+
+.cart-title {
+    color: #000000;
+    font-size: 30px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.cart-list {    
+    display: flex;
+    flex-direction: column;    
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #160d3d;
+    border-radius: 5px; 
+    margin: 10px;  
+    padding: 0 10px; 
+}
+
+.cart-item-title {
+    color: #ce3333;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.cart-quantity {
+    height: 20px;
+    width: 30px;
+    padding: 5px;
+}
+
+.cart-btn {
+    padding: 10px 15px;
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
+    font-size: 20px;
+    background-color: #ce3333;
+    border-radius: 5px;
+}
+
+.cart-total-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.cart-total-price h3 {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.cart-purchase {
+    padding: 10px 15px;
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
+    font-size: 20px;
+    background-color: #322feb;
+    border-radius: 5px;
+}
+
+.total-price { 
+    font-weight: 400;
+}
+
+.not-active {
+    pointer-events: none;
+    background-color: #727272;
+}
