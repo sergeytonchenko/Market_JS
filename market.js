@@ -141,8 +141,10 @@ $(document).ready(function content() {
         let input = event.target;
         let span = parseInt($(this).prev().prev().text().replace(/[^\d]/ig, ''));
         console.log(span);
-        if (isNaN(input.value) || input.value <= 0 || input.value > span) {
+        if (isNaN(input.value) || input.value <= 0) {
             input.value = 1            
+        } else if (input.value > span) {
+            input.value = span
         }
         updateCartTotal()
     }
