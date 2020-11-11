@@ -1,21 +1,37 @@
 $(document).ready(function content() {
-    let arrDataGoods = []; 
-    let DataIdGroup = null;
     let ProductPrice = null;
-    let DataIdProduct = null;
     let ProductQuantity = null;
     let main = document.querySelector('.main');
     let productRow = '';
     let productList = '';
     let productItem = '';
-
-    $.getJSON( "names.json", function( names ) { 
-        getDataArray().then((response) => {
-            render(names, response)
-        }).catch(e => console.warn(e));    
+    let rate = 0;
+    let ratePrev = 0;   
+    
+    
+    getNames();
+    //setInterval(getNames, 2000);
+    
+    function getNames() {
+        $.getJSON( "names.json", function( names ) { 
+            getDataArray().then((response) => {
+                render(names, response)
+            }).catch(e => console.warn(e));    
     });
+    }
+
+    function getDataArray () {
+        return new Promise((resolve, reject) => {
+            $.getJSON( "data.json")
+            .done(response => resolve(response.Value.Goods))
+            .fail(error => reject(error))
+        });
+    };
     
     function render(names, response) {
+        ratePrev = rate;
+        randomRate (24, 35);
+        // $('.main > div').remove();  
         $.each( names, function( key, val ) {
             let GroupID = key;
             let NameGroup = val.G;
@@ -29,7 +45,7 @@ $(document).ready(function content() {
                 })
                 
                 if (a != undefined) {
-                    ProductPrice = a.C;
+                    ProductPrice = (a.C * rate).toFixed(2);                    
                     ProductQuantity = a.P;
                 } else {
                     ProductPrice = 0;
@@ -39,18 +55,8 @@ $(document).ready(function content() {
             });            
         });
         ready();
-        $('.product-list').hide();
-        $('.product-row-title').click(function(){
-            $(this).nextAll().toggle();            
-        });  
-    }
-
-    function getDataArray () {
-        return new Promise((resolve, reject) => {
-            $.getJSON( "data.json")
-            .done(response => resolve(response.Value.Goods))
-            .fail(error => reject(error))
-        });
+        accordion();
+        priceCompare(rate, ratePrev);
     }
 
     function renderList(NameGroup) {
@@ -59,13 +65,14 @@ $(document).ready(function content() {
         productRowTitle = document.createElement('h2');
         productRowTitle.classList.add('product-row-title');
         productRowTitle.innerText = (`${NameGroup}`);
-        productList = document.createElement('div');
+        productList = document.createElement('ul');
         productList.classList.add('product-list'); 
         productRow.append(productRowTitle, productList);
         main.append(productRow);
     }
+
     function renderItem(ProductName, ProductPrice, ProductQuantity, productRow) {       
-        productItem = document.createElement('div');
+        productItem = document.createElement('li');
         productItem.classList.add('product-item');
         if (ProductQuantity == 0) {
             productItem.classList.add('not-active');
@@ -74,15 +81,14 @@ $(document).ready(function content() {
                                 ${ProductName}
                                 <span class="product-quantity">(${ProductQuantity})</span>
                             </h3>
-                            <p class="product-price">${ProductPrice}</p>
+                            <p class="product-price">${ProductPrice} грн.</p>
                             <button class="product-btn">Add</button>
                         `;
         productItem.innerHTML = productItems;
         productList.append(productItem);        
     }
     
-    function ready() {
-    
+    function ready() {    
 
         let removeCartItemButtons = document.querySelectorAll('.cart-btn');
         for (let i = 0; i < removeCartItemButtons.length; i++) {
@@ -152,6 +158,7 @@ $(document).ready(function content() {
     function addToCartClicked(event) {
         let button = event.target;
         let shopItem = button.parentElement;
+
         let title = shopItem.querySelector('.product-title').innerText;
         let price = shopItem.querySelector('.product-price').innerText;    
         addItemToCart(title, price);
@@ -179,5 +186,38 @@ $(document).ready(function content() {
         cartList.append(cartItem);
         cartItem.querySelector('.cart-btn').addEventListener('click', removeCartItem);
         cartItem.querySelector('.cart-quantity').addEventListener('change', quantityChanged);
+    }
+
+    // Аккордион
+    function accordion () {
+        $('.product-list').hide();
+        $('.product-list').first().show();
+        $('.product-row-title').click(function(){
+            $(this).nextAll().toggle();            
+        });
+    }
+
+    // Случаное число - курс доллара
+    function randomRate (min, max) {
+        rate = (Math.random() * (max - min) + min).toFixed(2);  
+        console.log(rate);
+        return rate;
+    }
+
+    //Сравнение цены
+    function priceCompare(rate, ratePrev) {
+        let productPriceTitle = document.querySelectorAll('.product-price');
+        for (let a = 0; a < productPriceTitle.length; a++) {
+            if (rate < ratePrev) {
+                productPriceTitle[a].classList.remove('increased');
+                productPriceTitle[a].classList.add('decreased');
+            } else if (rate == ratePrev || ratePrev == 0) {
+                productPriceTitle[a].classList.remove('decreased');
+                productPriceTitle[a].classList.remove('increased');
+            } else {
+                productPriceTitle[a].classList.remove('decreased');
+                productPriceTitle[a].classList.add('increased');
+            }
+        }
     }
 })
