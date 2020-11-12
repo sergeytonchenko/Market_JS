@@ -6,7 +6,6 @@ $(document).ready(function content() {
   let productList = '';
   let productItem = '';
   let productPriceTag = '';
-  let cartPriceTag = '';
   let rate = 0;
   let ratePrev = 0;
 
@@ -61,11 +60,11 @@ $(document).ready(function content() {
     });
     priceCompare(rate, ratePrev);
     updatePrice(ProductPriceArr);
-    updateCartPrice();
+    updateCartPrice(rate);
+    updateCartTotal();
   }
 
   function render(names, response) {
-    ratePrev = rate;
     randomRate(24, 35);
     $.each(names, function (key, val) {
       let GroupID = key;
@@ -80,13 +79,13 @@ $(document).ready(function content() {
         });
 
         if (a != undefined) {
-          ProductPrice = (a.C * rate).toFixed(2);
+          ProductPrice = a.C;
           ProductQuantity = a.P;
         } else {
           ProductPrice = 0;
           ProductQuantity = 0;
         }
-        renderItem(ProductName, ProductPrice, ProductQuantity, productRow);
+        renderItem(ProductName, ProductPrice, ProductQuantity, rate);
       });
     });
     ready();
@@ -107,7 +106,7 @@ $(document).ready(function content() {
   }
 
   //Функция, создает список продуктов
-  function renderItem(ProductName, ProductPrice, ProductQuantity, productRow) {
+  function renderItem(ProductName, ProductPrice, ProductQuantity, rate) {
     productItem = document.createElement('li');
     productItem.classList.add('js-product-item');
     if (ProductQuantity == 0) {
@@ -117,7 +116,9 @@ $(document).ready(function content() {
                                 ${ProductName}
                                 <span class="js-product-quantity">(${ProductQuantity})</span>
                             </h3>
-                            <p class="js-product-price">${ProductPrice} грн.</p>
+                            <p class="js-product-price" price="${ProductPrice}">${(
+      ProductPrice * rate
+    ).toFixed(2)} грн.</p>
                             <button class="js-product-btn">Add</button>
                         `;
     productItem.innerHTML = productItems;
@@ -185,7 +186,6 @@ $(document).ready(function content() {
   function quantityChanged(event) {
     let input = event.target;
     let span = parseInt($(this).parent().prev().text().replace(/[^\d]/g, ''));
-    console.log(span);
     if (isNaN(input.value) || input.value <= 0) {
       input.value = 1;
     } else if (input.value > span) {
@@ -201,13 +201,16 @@ $(document).ready(function content() {
     let titleCart = cartGroupName.querySelector('.js-product-row-title')
       .innerText;
     let title = shopItem.querySelector('.js-product-title').innerText;
-    let price = shopItem.querySelector('.js-product-price').innerText;
-    addItemToCart(title, titleCart, price);
+    let namesC = parseFloat(
+      shopItem.querySelector('.js-product-price').getAttribute('price')
+    );
+    let price = (namesC * rate).toFixed(2);
+    addItemToCart(title, titleCart, price, namesC);
     updateCartTotal();
   }
 
   //Добавление товара в корзину
-  function addItemToCart(title, titleCart, price) {
+  function addItemToCart(title, titleCart, price, namesC) {
     let cartList = document.querySelector('.cart-list');
     let cartItem = document.createElement('div');
     cartItem.classList.add('cart-item');
@@ -233,7 +236,7 @@ $(document).ready(function content() {
               <input type="number" class="cart-quantity" value="1">
               <p>${cartQuantityString}</p>            
             </div>            
-            <p class="cart-price">${price}<span> / шт.</span></p>
+            <p class="cart-price" price="${namesC}">${price}<span> / шт.</span></p>
             <button class="cart-btn">Remove</button>`;
     cartItem.innerHTML = cartRowContents;
     cartList.append(cartItem);
@@ -286,20 +289,12 @@ $(document).ready(function content() {
   }
 
   //Обновление цены товара в корзине
-  function updateCartPrice() {
+  function updateCartPrice(rate) {
     let cartItems = document.querySelectorAll('.cart-item');
-    let total = 0;
     for (let i = 0; i < cartItems.length; i++) {
-      let priceElement = cartItems[i].querySelector('.cart-price');
-      console.log(priceElement.innerText);
-      // if (productPriceTag[i] == cartItems)  {
-      // }
-      // let cartItem = cartItems[i];
-      // let priceElement = cartItem.querySelector('.cart-price');
-      // let quantityElement = cartItem.querySelector('.cart-quantity');
-      // let price = parseFloat(priceElement.innerText.replace('$', ''));
-      // let quantity = quantityElement.value;
-      // total = total + price * quantity;
+      let cartPrice = document.querySelectorAll('.cart-price');
+      let actualPrice = cartPrice[i].getAttribute('price');
+      cartPrice[i].innerText = `${(actualPrice * rate).toFixed(2)} грн.`;
     }
   }
 });
