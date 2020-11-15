@@ -9,6 +9,9 @@ $(document).ready(function content() {
   let rate = 0;
   let ratePrev = 0;
 
+  let a = 'a,b'.split(',');
+  console.log(a);
+
   //Функция рендер DOM
   $.getJSON('names.json', function (names) {
     getDataArray()
